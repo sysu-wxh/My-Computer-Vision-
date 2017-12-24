@@ -1,0 +1,39 @@
+﻿生成启动时间为 2017/12/24 23:49:14。
+     1>项目“C:\Users\wxh2017\documents\visual studio 2015\Projects\mySEED\mySEED\mySEED.vcxproj”在节点 2 上(Build 个目标)。
+     1>ClCompile:
+         F:\Program Files (x86)\Visual Studio2015\VC\bin\x86_amd64\CL.exe /c /Zi /nologo /W3 /WX- /sdl /O2 /Oi /GL /D NDEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"x64\Release\\" /Fd"x64\Release\vc140.pdb" /Gd /TP /errorReport:prompt superpixel_test.cpp
+         superpixel_test.cpp
+     1>D:\OpenCV\openCV\opencv\build\include\opencv2/core/mat.hpp(1965): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+     1>D:\OpenCV\openCV\opencv\build\include\opencv2/core/persistence.hpp : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+     1>D:\OpenCV\openCV\opencv\build\include\opencv2/core/utility.hpp : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+     1>D:\OpenCV\openCV\opencv\build\include\opencv2/core/utility.hpp : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+     1>c:\users\wxh2017\documents\visual studio 2015\projects\myseed\myseed\Vertex.h(17): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
+     1>c:\users\wxh2017\documents\visual studio 2015\projects\myseed\myseed\Vertex.h(37): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
+     1>c:\users\wxh2017\documents\visual studio 2015\projects\myseed\myseed\EstimatePlane.h(145): warning C4244: “return”: 从“double”转换到“int”，可能丢失数据
+     1>c:\users\wxh2017\documents\visual studio 2015\projects\myseed\myseed\EstimatePlane.h(153): warning C4267: “return”: 从“size_t”转换到“int”，可能丢失数据
+     1>c:\users\wxh2017\documents\visual studio 2015\projects\myseed\myseed\Map.h(40): warning C4244: “=”: 从“double”转换到“int”，可能丢失数据
+     1>c:\users\wxh2017\documents\visual studio 2015\projects\myseed\myseed\Map.h(82): warning C4267: “return”: 从“size_t”转换到“int”，可能丢失数据
+     1>c:\users\wxh2017\documents\visual studio 2015\projects\myseed\myseed\Map.h(83): warning C4267: “return”: 从“size_t”转换到“int”，可能丢失数据
+     1>superpixel_test.cpp(289): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
+     1>superpixel_test.cpp(101): warning C4477: 'printf' : format string '%s' requires an argument of type 'char *', but variadic argument 1 has type 'std::string'
+     1>superpixel_test.cpp(114): warning C4101: “pdValue”: 未引用的局部变量
+     1>superpixel_test.cpp(116): warning C4101: “dy”: 未引用的局部变量
+     1>superpixel_test.cpp(116): warning C4101: “dx”: 未引用的局部变量
+       Link:
+         F:\Program Files (x86)\Visual Studio2015\VC\bin\x86_amd64\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\wxh2017\documents\visual studio 2015\Projects\mySEED\x64\Release\mySEED.exe" /INCREMENTAL:NO /NOLOGO opencv_world310.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /Debug /PDB:"C:\Users\wxh2017\documents\visual studio 2015\Projects\mySEED\x64\Release\mySEED.pdb" /SUBSYSTEM:CONSOLE /OPT:REF /OPT:ICF /LTCG:incremental /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\wxh2017\documents\visual studio 2015\Projects\mySEED\x64\Release\mySEED.lib" /MACHINE:X64 x64\Release\EstimatePlane.obj
+         x64\Release\Map.obj
+         x64\Release\Matrix.obj
+         x64\Release\PlaneProject.obj
+         x64\Release\seeds2.obj
+         x64\Release\superpixel_test.obj
+         正在生成代码
+         1 of 1476 functions ( 0.1%) were compiled, the rest were copied from previous compilation.
+           0 functions were new in current compilation
+           0 functions had inline decision re-evaluated but remain unchanged
+         已完成代码的生成
+         mySEED.vcxproj -> C:\Users\wxh2017\documents\visual studio 2015\Projects\mySEED\x64\Release\mySEED.exe
+     1>已完成生成项目“C:\Users\wxh2017\documents\visual studio 2015\Projects\mySEED\mySEED\mySEED.vcxproj”(Build 个目标)的操作。
+
+已成功生成。
+
+已用时间 00:00:01.98

@@ -85,12 +85,12 @@ private:
 						// keep one labeling for each level
 	UINT* nr_labels; //[level]
 	UINT** parent; //[level][label] = corresponding label of block with level+1
-	float** disparity_mean;   //[level][label]  calculate the mean disparity of corresponding label at this level
-	float** x_mean;
-	float** y_mean;
+	float** disparity_mean;   //[level][label]  calculate the mean disparity of corresponding label at this level 计算此级别对应标签的平均差距
+	float** x_mean;   //x的平均
+	float** y_mean;   //y的平均
 	UINT** nr_partitions; //[level][label] how many partitions label has on level-1
-	int** T; //[level][label] how many pixels with this label
-	int** P; //[level][label] count pixels with disparities (disparity > 0)
+	int** T; //[level][label] how many pixels with this label  此标记下有多少个像素点
+	int** P; //[level][label] count pixels with disparities (disparity > 0)  计算有差异的像素
 	int go_down_one_level();
 
 	// initialization

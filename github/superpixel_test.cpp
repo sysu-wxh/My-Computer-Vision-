@@ -46,10 +46,10 @@ int main(int argc, char* argv[]) {
 	
 	//************************
 	//定义各类路径
-	string root_str = "I://Master//dataset//000//";
-	string input_str = root_str + "img//";
-	string pose_name = "I://Master//dataset//data_odometry_poses//dataset//poses//05.txt";  //pose文件
-	string dispairty_str = root_str + "SGM//";
+	string root_str = "E://programs//dpdonwload//temp//temp//";
+	string input_str = root_str + "image_2//";
+	string pose_name = "E://programs//dpdonwload//temp//temp//poses//05.txt";  //pose文件
+	string dispairty_str = root_str + "SPS//";
 	string output_str1 = root_str + "SEEDResult//";    // 输出分割后图像
 	string output_str2 = root_str + "SEEDBoundary//";   // 输出分割边界图
 	string output_str3 = root_str + "SEEDLabel//";     //  输出分割seg文件
@@ -67,19 +67,19 @@ int main(int argc, char* argv[]) {
 	//double cu = 607.1928, cv = 185.2157, f = 718.856, base = 0.54;
 	double cu = 601.8873, cv = 183.1104, f = 707.091, base = 0.54;
 	//double cu = 0.0, cv = 0.0, f = 1.0, base = 1.0;
-	const int startNum = 0, imageNum = 210, imgStep = 3;
+	const int startNum = 0, imageNum = 20, imgStep = 1;
 	char baseName[32];
 
 	//****************
-	//读取pose文件并读取image_2与视差图文件
+	//读取pose文件
 	ifstream pose_file(pose_name.c_str(), ios::in);   // input pose file
 	if (startNum == 0)    // 如果开始于第0帧
-		pose.push_back(Matrix::eye(4));
-	double temp00, temp01, temp02, temp03,
-		temp10, temp11, temp12, temp13,
-		temp20, temp21, temp22, temp23,
-		temp30 = 0.0, temp31 = 0.0, temp32 = 0.0, temp33 = 1.0;
-	while (!pose_file.eof()) {
+		pose.push_back(Matrix::eye(4));  //将一个四阶的单位矩阵压入pose向量中
+	double temp00, temp01, temp02, temp03,   //定义了一个四阶的double变量
+		   temp10, temp11, temp12, temp13,
+	   	   temp20, temp21, temp22, temp23,
+		   temp30 = 0.0, temp31 = 0.0, temp32 = 0.0, temp33 = 1.0;
+	while (!pose_file.eof()) {  //旋转平移矩阵
 		pose_file >> temp00 >> temp01 >> temp02 >> temp03
 			>> temp10 >> temp11 >> temp12 >> temp13 
 			>> temp20 >> temp21 >> temp22 >> temp23;
@@ -91,39 +91,44 @@ int main(int argc, char* argv[]) {
 		pose.push_back(tempM);
 	}
 	cout << "Pose file read complete" << endl;
+
+	//********************************************************************
+	//以下开始求planecell
 	Map map = Map();
-	map.setPrecision(precision);
-	string output_name4 = root_str + "output00_150.txt";
-	for (int imageIndex = startNum; imageIndex < imageNum; imageIndex += imgStep) {
-		sprintf_s(baseName, "%06d.png", imageIndex);
+	map.setPrecision(precision);    //设置map的精度
+	string output_name4 = root_str + "output00_150.txt";  //设置最终输出的文件名
+	for (int imageIndex = startNum; imageIndex < imageNum; imageIndex += imgStep) {  //从第startNum张开始，以imgStep的增长，截止到imageNum为止
+		sprintf_s(baseName, "%06d.png", imageIndex);     //设置第几张图片，名称赋值给baseName
 		cout << "processing number = " << baseName << endl;
-		string input_file1 = input_str + baseName;
-		IplImage* img = cvLoadImage(input_file1.c_str());
-		string disparity_file = dispairty_str + baseName;
+		string input_file1 = input_str + baseName;    //设置要读取的image_2中的第imageIndex张图片
+		IplImage* img = cvLoadImage(input_file1.c_str());  //加载图片给img
+		string disparity_file = dispairty_str + baseName;   //设置要读取的视差图中对应的imageIndex张图片
 		//cvNamedWindow("1");
 		//cvShowImage("1", img);
 		//cvWaitKey(0);
-		IplImage* disparityImage = cvLoadImage(disparity_file.c_str(), -1);
-		if ((!img) || (!disparityImage))
+		IplImage* disparityImage = cvLoadImage(disparity_file.c_str(), -1);   //加载图片给disparityImage
+		if ((!img) || (!disparityImage))   //如果有一个没读取到的话
 		{
 			printf("Error while opening %s\n", input_file1);
 			return -1;
 		}
-		width = img->width;
-		height = img->height;
-		int sz = height*width;
+		width = img->width;   //得到img的宽度
+		height = img->height;  //得到img的高度
+		std::cout << width << "+" << height << std::endl;
+		int sz = height*width;   //得到总大小（也就是像素数）
 
-		printf("Image loaded %d\n", img->nChannels);
+		printf("Image loaded %d\n", img->nChannels);   //输出img图像的通道数
 
 		UINT* ubuff = new UINT[sz];
 		UINT* ubuff2 = new UINT[sz];
 		UINT* dbuff = new UINT[sz];
-		UINT pValue;
+		UINT pValue;   //rgb三颜色合为一个变量
 		UINT pdValue;
 		char c;
 		UINT r, g, b, d = 0, dx, dy;
 		int idx = 0;
 		for (int j = 0; j < img->height; j++)
+		{
 			for (int i = 0; i < img->width; i++)
 			{
 				if (img->nChannels == 3)
@@ -145,10 +150,12 @@ int main(int argc, char* argv[]) {
 					printf("Unknown number of channels %d\n", img->nChannels);
 					return -1;
 				}
-				ubuff[idx] = pValue;
+				ubuff[idx] = pValue;   //ubuff存了每个image_2图的RGB值（三合一）
 				ubuff2[idx] = pValue;
 				idx++;
 			}
+		}
+			
 
 		/*******************************************
 		* SEEDS SUPERPIXELS                       *
@@ -197,44 +204,49 @@ int main(int argc, char* argv[]) {
 			if (nr_superpixels == 6) { seed_width = 2; seed_height = 3; nr_levels = 7; }
 		}
 		start = clock();
-		seeds.initialize(seed_width, seed_height, nr_levels);
-		seeds.update_disparityImage(disparityImage);
+		seeds.initialize(seed_width, seed_height, nr_levels);//初始化lable  分割成想要的大小，并且统计了颜色直方图
+		seeds.update_disparityImage(disparityImage);   //获得disparity_data数组，存储了视差图每个像素的灰度值
 
-
+		//225
 		seeds.update_image_ycbcr(ubuff);
-		seeds.iterate();
+		seeds.iterate();   //以上超像素结束，可以在这里改
 
 		printf("SEEDS produced %d labels\n", seeds.count_superpixels());
 
-		EstimatePlane estimatePlane;
+		//创建一个EstimatePlane（直译为估计平面??）
+		EstimatePlane estimatePlane;   //计算平面方程
 		estimatePlane.setIterationTotal(outerIterationTotal, innerIterationTotal);
 		estimatePlane.setWeightParameter(lambda_pos, lambda_depth, lambda_bou, lambda_smo);
 		estimatePlane.setInlierThreshold(lambda_d);
 		estimatePlane.setPenaltyParameter(lambda_hinge, lambda_occ, lambda_pen);
 
 
+		//以下为得到planecell的过程
 		IplImage* optimizedDisparityImage, *segmentImage;
 		CvSize imgSize;   //读入图片的大小
 		imgSize.width = width, imgSize.height = height;
-		optimizedDisparityImage = cvCreateImage(imgSize, 8, 1);
-		segmentImage = cvCreateImage(imgSize, 16, 1);
-		estimatePlane.planeCompute(disparityImage, seeds.count_superpixels(), seeds.labels[nr_levels - 1], segmentImage, optimizedDisparityImage);
+		optimizedDisparityImage = cvCreateImage(imgSize, 8, 1);  //创建一个大小相同，深度为8，通道为1的图给optimizedDisparityImage
+		segmentImage = cvCreateImage(imgSize, 16, 1);   //创建一个大小相同，深度为16，通道为1的图给segmentImage
+		estimatePlane.planeCompute(disparityImage, seeds.count_superpixels(), seeds.labels[nr_levels - 1], segmentImage, optimizedDisparityImage);//核心
 
 		double** planeFunction;   //give each pixel a plane function
 		planeFunction = new double*[width*height];
 		for (int i = 0; i < width*height; ++i)
 			planeFunction[i] = new double[3];
-		estimatePlane.getDisparityPlane(planeFunction);
+		estimatePlane.getDisparityPlane(planeFunction);  
 		end = clock();
 		double elapsed_secs = double(end - start) / CLOCKS_PER_SEC;
 		printf("time comsumption=%lf sec\n", elapsed_secs);
 
 		//seeds.update_blocks_d(planeFunction);   // update blocks 应该在前面 这里更新了labels之后再进行平面分割
 		//seeds.extractVertex(seeds.count_superpixels());
-		seeds.findcontour();
-		estimatePlane.performSmoothingSegmentation();
+		seeds.findcontour();                                //here找superpixel的角点
+		estimatePlane.performSmoothingSegmentation();  //
 		estimatePlane.makeOutputImage(segmentImage, optimizedDisparityImage);
+		//以上平面方程的计算
 
+
+		//对planecell进行投影
 		std::vector< std::vector<double> > disparityPlaneParameters;
 		std::vector< std::vector<int> > boundaryLabels;
 		estimatePlane.makeSegmentBoundaryData(disparityPlaneParameters, boundaryLabels);

@@ -528,27 +528,27 @@ void SEEDS::initialize(int seeds_w, int seeds_h, int nr_levels)
 {
 	deinitialize();
 
-	this->seeds_w = seeds_w;
+	this->seeds_w = seeds_w;  
 	this->seeds_h = seeds_h;
 	this->seeds_nr_levels = nr_levels;
 	this->seeds_top_level = nr_levels - 1;
 
 	// init labels
-	labels = new UINT*[seeds_nr_levels];
+	labels = new UINT*[seeds_nr_levels];    //以下都是大小为seed_nr_level的数组
 	parent = new UINT*[seeds_nr_levels];
 	nr_partitions = new UINT*[seeds_nr_levels];
 	nr_labels = new UINT[seeds_nr_levels];
 	nr_w = new int[seeds_nr_levels];
-	nr_h = new int[seeds_nr_levels];
+	nr_h = new int[seeds_nr_levels];    //*********
 	int level = 0;
-	int nr_seeds_w = floor(width / seeds_w);
+	int nr_seeds_w = floor(width / seeds_w);   //初始的nr_seeds_w为图片宽除以要分割的份数
 	int nr_seeds_h = floor(height / seeds_h);
-	int nr_seeds = nr_seeds_w*nr_seeds_h;
-	nr_labels[level] = nr_seeds;
-	nr_w[level] = nr_seeds_w;
-	nr_h[level] = nr_seeds_h;
-	labels[level] = new UINT[width*height];
-	parent[level] = new UINT[nr_seeds];
+	int nr_seeds = nr_seeds_w*nr_seeds_h;    //初始的seeds数量
+	nr_labels[level] = nr_seeds;    //第level层的标注
+	nr_w[level] = nr_seeds_w;     //第level层的格子的宽度
+	nr_h[level] = nr_seeds_h;    //第level层的格子的高度
+	labels[level] = new UINT[width*height];   //第level层为一个width*height大小的数组，存每个像素
+	parent[level] = new UINT[nr_seeds];     //第level层是一个seeds个数大小的数组
 	nr_partitions[level] = new UINT[nr_seeds];
 	// allocate disparity array
 	disparity_data = reinterpret_cast<float*>(malloc(width * height * sizeof(float)));
@@ -609,7 +609,7 @@ void SEEDS::update_image_ycbcr(UINT* image) {
 
 	seeds_current_level = seeds_nr_levels - 2;
 
-	assign_labels();
+	assign_labels();   //对每一层的每一个小格子都进行了标注
 
 	// adaptive histograms
 #ifdef LAB_COLORSPACE
@@ -651,7 +651,7 @@ void SEEDS::update_disparityImage(IplImage * disparityImage) {
 	int index = 0;
 	for (int y = 0; y < height; ++y) {
 		for (int x = 0; x < width; ++x) {
-			disparity_data[index] = static_cast<float>(cvGet2D(disparityImage, y, x).val[0]);
+			disparity_data[index] = static_cast<float>(cvGet2D(disparityImage, y, x).val[0]);   //取视差图的每个像素的灰度值
 			index++;
 		}
 	}
@@ -678,10 +678,11 @@ void SEEDS::assign_labels()
 		const int y_width = y*width;
 		for (int x = 0; x < width; x++)
 		{
-			int label_x = x / step_w;
-			if (label_x >= nr_seeds_w) label_x = nr_seeds_w - 1;
+			int label_x = x / step_w;    //每满足step_w的长度的像素就是一个label。计算横向的lable  并依次计数，从0开始到nr_seeds_w-1
+			if (label_x >= nr_seeds_w) label_x = nr_seeds_w - 1;    //
 			labels[level][y_width + x] = label_y*nr_seeds_w + label_x;
 			// parents will be set in the next loop
+			//完成了将像素划分到不同lable
 		}
 	}
 
@@ -787,7 +788,7 @@ void SEEDS::compute_histograms(int until_level)
 	until_level++;
 
 
-	// clear histograms
+	// clear histograms  对颜色直方图进行清零操作
 	for (int level = 0; level < seeds_nr_levels; level++)
 	{
 		for (UINT label = 0; label < nr_labels[level]; label++)
@@ -802,11 +803,12 @@ void SEEDS::compute_histograms(int until_level)
 	}
 
 	// build histograms on the first level by adding the pixels to the blocks
+	//在第一层上通过将像素加入到块中来创建颜色直方图
 	for (int x = 0; x < width; x++)
 		for (int y = 0; y < height; y++)
 		{
 			int i = y*width + x;
-			add_pixel(0, labels[0][i], x, y);
+			add_pixel(0, labels[0][i], x, y);   //将第0层的i加入
 		}
 
 	// build histograms on the upper levels by adding the histogram from the level below

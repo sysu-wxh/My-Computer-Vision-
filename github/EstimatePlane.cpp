@@ -63,6 +63,7 @@ void EstimatePlane::setPenaltyParameter(const double hingePenalty, const double 
 	impossiblePenalty_ = impossiblePenalty;
 }
 
+//平面计算
 void EstimatePlane::planeCompute(IplImage * disparityImage, int segmentTotal, UINT* labelImage,
 	IplImage* segmentImage, IplImage* optimizedDisparityImage) {
 	segmentTotal_ = segmentTotal;
@@ -71,8 +72,8 @@ void EstimatePlane::planeCompute(IplImage * disparityImage, int segmentTotal, UI
 	stepSize_ = static_cast<int>(sqrt(static_cast<double>(width_*height_) / segmentTotal_) + 2.0);
 	segments_.resize(segmentTotal_);
 
-	allocateBuffer();
-	labelImageAssignment(labelImage);
+	allocateBuffer();  //分配内存函数，大小为width*height，分配得到了labelImage、disparityImage、outlierFlagImage
+	labelImageAssignment(labelImage);    //对EstimatePlane中的labelImage_变量进行赋值。lableImage ---> labelImage_
 	/*cvNamedWindow("1");
 	cvShowImage("1", disparityImage);
 	cvWaitKey(0);*/
@@ -86,20 +87,20 @@ void EstimatePlane::planeCompute(IplImage * disparityImage, int segmentTotal, UI
 		for (int x = 0; x < width_; ++x) {
 			//if (cvGet2D(disparityImage, y, x).val[0] != 0)
 			//std::cout << x << " " << y << " " << (int)(cvGet2D(disparityImage, y, x).val[0]) << std::endl;
-			disparityData[width_*y + x] = static_cast<float>(cvGet2D(disparityImage, y, x).val[0]);
+			disparityData[width_*y + x] = static_cast<float>(cvGet2D(disparityImage, y, x).val[0]);   //得到x,y点的RGB的B通道的值
 		}
 	}
-	estimateDisparityPlaneRANSAC(disparityData);
+	estimateDisparityPlaneRANSAC(disparityData);  //最主演
 	float* interpolatedDisparityImage = reinterpret_cast<float*>(malloc(width_*height_ * sizeof(float)));
-	interpolateDisparityImage(interpolatedDisparityImage, disparityData);
+	interpolateDisparityImage(interpolatedDisparityImage, disparityData);   //进行了插值
 	estimateDisparityPlaneRANSAC(interpolatedDisparityImage);
-	initializeOutlierFlagImage();
+	initializeOutlierFlagImage(); 
 	free(interpolatedDisparityImage);
 	//makeOutputImage(segmentImage, optimizedDisparityImage);
 	//performSmoothingSegmentation();
 
 }
-
+ 
 
 void EstimatePlane::allocateBuffer() {
 	labelImage_ = reinterpret_cast<int*>(malloc(width_*height_ * sizeof(int)));
